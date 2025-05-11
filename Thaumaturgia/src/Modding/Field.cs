@@ -1,5 +1,5 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
+using Thaumaturgia.Core.Networking.Serialization;
 using Thaumaturgia.Core.Networking.Serialization.Codecs;
 
 namespace Thaumaturgia.Modding
