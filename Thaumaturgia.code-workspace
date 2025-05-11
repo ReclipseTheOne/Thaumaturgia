@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": ".",
+			"exclude": {
+				"./Thaumaturgia": true
+			}
+		},
+		{
+			"path": "./Thaumaturgia"
+		}
+	],
+	"settings": {}
+}
