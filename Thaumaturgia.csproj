@@ -1,10 +1,96 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
+    <!-- Basic project settings -->
     <OutputType>Exe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <!-- Set output path to run folder -->
+    <OutputPath>$(MSBuildProjectDirectory)\run</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    
+    <!-- Custom properties for task system -->
+    <RunDir>$(MSBuildProjectDirectory)\run</RunDir>
+    <AssetsDir>$(MSBuildProjectDirectory)\Thaumaturgia\assets</AssetsDir>
+    <ConfigDir>$(RunDir)\config</ConfigDir>
+    <ModsDir>$(RunDir)\mods</ModsDir>
+    <IsDevelopmentBuild>true</IsDevelopmentBuild>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="HarmonyX" Version="2.14.0" />
+    <PackageReference Include="OpenTK" Version="4.9.4" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.4" />
+  </ItemGroup>
+  
+  <PropertyGroup>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+  </PropertyGroup>
+    <!-- Copy assets to output directory -->
+  <ItemGroup>
+    <Content Include="Thaumaturgia\assets\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>assets\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+  </ItemGroup>
+
+  <!-- Custom Task Definitions -->
+  <!-- These are our Gradle-like task definitions -->
+  
+  <!-- Clean task: Removes the run directory -->
+  <Target Name="CleanRunFolder">
+    <RemoveDir Directories="$(RunDir)" />
+    <Message Text="Cleaned run folder at $(RunDir)" Importance="high" />
+  </Target>
+  
+  <!-- Setup environment task: Creates necessary directory structure -->
+  <Target Name="SetupEnvironment">
+    <MakeDir Directories="$(RunDir)" Condition="!Exists('$(RunDir)')" />
+    <MakeDir Directories="$(RunDir)\assets" Condition="!Exists('$(RunDir)\assets')" />
+    <MakeDir Directories="$(RunDir)\config" Condition="!Exists('$(RunDir)\config')" />
+    <MakeDir Directories="$(RunDir)\saves" Condition="!Exists('$(RunDir)\saves')" />
+    <MakeDir Directories="$(RunDir)\mods" Condition="!Exists('$(RunDir)\mods')" />
+    <MakeDir Directories="$(RunDir)\assets\textures" Condition="!Exists('$(RunDir)\assets\textures')" />
+    <MakeDir Directories="$(RunDir)\assets\shaders" Condition="!Exists('$(RunDir)\assets\shaders')" />
+    <MakeDir Directories="$(RunDir)\assets\models" Condition="!Exists('$(RunDir)\assets\models')" />
+    <MakeDir Directories="$(RunDir)\assets\sounds" Condition="!Exists('$(RunDir)\assets\sounds')" />
+    <Message Text="Setup environment directories" Importance="high" />
+  </Target>
+  
+  <!-- Copy assets task: Copies assets from source to run directory -->
+  <Target Name="CopyAssets" DependsOnTargets="SetupEnvironment">
+    <ItemGroup>
+      <AssetFiles Include="$(AssetsDir)\**\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(AssetFiles)" 
+          DestinationFiles="@(AssetFiles->'$(RunDir)\assets\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Message Text="Copied assets to run folder" Importance="high" />
+  </Target>
+  <!-- Build and Run (Development Mode) -->
+  <Target Name="RunDev" DependsOnTargets="SetupEnvironment;CopyAssets;Build">
+    <Message Text="=======================================" Importance="high" />
+    <Message Text="Starting Thaumaturgia in development mode" Importance="high" />
+    <Message Text="Working Directory: $(RunDir)" Importance="high" />
+    <Message Text="Executable Path: $(RunDir)\Thaumaturgia.exe" Importance="high" />
+    <Message Text="=======================================" Importance="high" />
+    <Exec Command="$(RunDir)\Thaumaturgia.exe" WorkingDirectory="$(RunDir)" />
+  </Target>
+  
+  <!-- Clean Build Run: Full rebuild and run -->
+  <Target Name="CleanBuildRun" DependsOnTargets="CleanRunFolder;RunDev">
+  </Target>
+  
+  <!-- Distribution prep: Package the game for distribution -->
+  <Target Name="PrepareDistribution">
+    <PropertyGroup>
+      <DistDir>$(MSBuildProjectDirectory)\dist</DistDir>
+    </PropertyGroup>
+    <RemoveDir Directories="$(DistDir)" Condition="Exists('$(DistDir)')" />
+    <MakeDir Directories="$(DistDir)" />
+    <ItemGroup>
+      <RunFiles Include="$(RunDir)\**\*.*" Exclude="$(RunDir)\**\*.pdb;$(RunDir)\**\*.xml" />
+    </ItemGroup>
+    <Copy SourceFiles="@(RunFiles)" DestinationFiles="@(RunFiles->'$(DistDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Message Text="Distribution prepared at $(DistDir)" Importance="high" />
+  </Target>
 
 </Project>

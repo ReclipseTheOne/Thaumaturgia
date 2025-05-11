@@ -1,0 +1,8 @@
+## Thaumaturgia
+
+Thaumaturgia is a voxel-based survival game written in C# with extensive modding capabilities. This project is currently in very early stages of development and any contribution is gladly appreciated. 
+
+## Modding
+
+Modding is intended to be handled via Harmony and BepInEx (after implementation) <3
+Since fields aren't modifiable after compilation (@Shadow when), it's recommended to use ```Thaumaturgia.Modding.Field``` for fields.

@@ -11,7 +11,11 @@
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
-            "problemMatcher": "$msCompile"
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         },
         {
             "label": "publish",
@@ -36,6 +40,82 @@
                 "${workspaceFolder}/Thaumaturgia.csproj"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Run Dev",
+            "command": "powershell.exe",
+            "type": "process",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy", "Bypass",
+                "-File", "${workspaceFolder}\\thaumaturgia.ps1",
+                "runDev"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Clean Build Run",
+            "command": "powershell.exe",
+            "type": "process",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy", "Bypass",
+                "-File", "${workspaceFolder}\\thaumaturgia.ps1",
+                "cleanBuildRun"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Setup Environment",
+            "command": "powershell.exe",
+            "type": "process",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy", "Bypass",
+                "-File", "${workspaceFolder}\\thaumaturgia.ps1",
+                "setupEnvironment"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Copy Assets",
+            "command": "powershell.exe",
+            "type": "process",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy", "Bypass",
+                "-File", "${workspaceFolder}\\thaumaturgia.ps1",
+                "copyAssets"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Prepare Distribution",
+            "command": "powershell.exe",
+            "type": "process",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy", "Bypass",
+                "-File", "${workspaceFolder}\\thaumaturgia.ps1",
+                "prepareDistribution"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Show Tasks",
+            "command": "powershell.exe",
+            "type": "process",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy", "Bypass",
+                "-File", "${workspaceFolder}\\thaumaturgia.ps1",
+                "tasks"
+            ],
+            "problemMatcher": []
         }
     ]
 }

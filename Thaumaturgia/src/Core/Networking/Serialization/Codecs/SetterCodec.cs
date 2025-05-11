@@ -1,21 +1,28 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Text.Json;
 
-namespace Thaumaturgia.Core.Networking.Serialization {
-    public class CompositeCodec<T> : ICodec<T> where T : new()
+namespace Thaumaturgia.Core.Networking.Serialization.Codecs {
+    public class SetterCodec<T> : ICodec<T> where T : new()
     {
         private readonly List<IFieldCodec> _fieldCodecs = new List<IFieldCodec>();
         
-        public byte[] SerializeToBytes(T value)
+        public void Encode(BinaryWriter writer, T value)
         {
-            var jsonString = SerializeToJson(value);
-            return System.Text.Encoding.UTF8.GetBytes(jsonString);
+            string json = SerializeToJson(value);
+            byte[] bytes = Encoding.UTF8.GetBytes(json);
+            writer.Write(bytes.Length);
+            writer.Write(bytes);
         }
         
-        public T DeserializeFromBytes(byte[] bytes)
+        public T Decode(BinaryReader reader)
         {
-            var jsonString = System.Text.Encoding.UTF8.GetString(bytes);
-            return DeserializeFromJson(jsonString);
+            int length = reader.ReadInt32();
+            byte[] bytes = reader.ReadBytes(length);
+            string json = Encoding.UTF8.GetString(bytes);
+            return DeserializeFromJson(json);
         }
         
         public string SerializeToJson(T value)
@@ -96,11 +103,11 @@ namespace Thaumaturgia.Core.Networking.Serialization {
         }
     }
 
-    public class CompositeCodecBuilder<T> where T : new()
+    public class SetterCodecBuilder<T> where T : new()
     {
-        private readonly CompositeCodec<T> _codec = new CompositeCodec<T>();
+        private readonly SetterCodec<T> _codec = new SetterCodec<T>();
         
-        public CompositeCodecBuilder<T> AddField<TField>(
+        public SetterCodecBuilder<T> AddField<TField>(
             string fieldName, 
             ICodec<TField> codec,
             Func<T, TField> getter,

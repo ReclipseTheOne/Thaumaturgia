@@ -1,7 +1,8 @@
 using System.Text;
 using System.Text.Json;
+using System.IO;
 
-namespace Thaumaturgia.Core.Networking.Serialization {
+namespace Thaumaturgia.Core.Networking.Serialization.Codecs {
     public class SimpleCodec<T> : ICodec<T> {   
         private JsonSerializerOptions _options;
 
@@ -13,14 +14,18 @@ namespace Thaumaturgia.Core.Networking.Serialization {
             };
         }
         
-        public byte[] SerializeToBytes(T value)
+        public void Encode(BinaryWriter writer, T value)
         {
             string json = SerializeToJson(value);
-            return Encoding.UTF8.GetBytes(json);
+            byte[] bytes = Encoding.UTF8.GetBytes(json);
+            writer.Write(bytes.Length);
+            writer.Write(bytes);
         }
         
-        public T DeserializeFromBytes(byte[] bytes)
+        public T Decode(BinaryReader reader)
         {
+            int length = reader.ReadInt32();
+            byte[] bytes = reader.ReadBytes(length);
             string json = Encoding.UTF8.GetString(bytes);
             return DeserializeFromJson(json);
         }

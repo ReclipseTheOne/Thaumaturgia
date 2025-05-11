@@ -1,4 +1,5 @@
 using System;
+using Thaumaturgia.Core.Networking.Serialization.Codecs;
 
 namespace Thaumaturgia.Core.Networking.Serialization
 {

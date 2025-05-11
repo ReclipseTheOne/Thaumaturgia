@@ -10,5 +10,9 @@
 			"path": "./Thaumaturgia"
 		}
 	],
-	"settings": {}
+	"settings": {
+        "files.exclude": {
+            "Thaumaturgia": true
+        }
+    }
 }

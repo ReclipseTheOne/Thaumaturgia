@@ -1,4 +1,6 @@
+using System.ComponentModel.DataAnnotations;
 using Thaumaturgia.Core.Networking.Serialization;
+using Thaumaturgia.Core.Networking.Serialization.Codecs;
 
 namespace Thaumaturgia.Utils {
     class Codecs {
@@ -9,5 +11,12 @@ namespace Thaumaturgia.Utils {
         public static ICodec<string> StringCodec = new SimpleCodec<string>();
         public static ICodec<bool> BoolCodec = new SimpleCodec<bool>();
         public static ICodec<byte[]> ByteArrayCodec = new SimpleCodec<byte[]>();
+        public static ICodec<ResourceLocation> ResourceLocationCodec = new TupleCodec<String, String, ResourceLocation>(
+            StringCodec,
+            StringCodec,
+            (ns, path) => new ResourceLocation(ns, path),
+            (rl) => rl.NameSpace,
+            (rl) => rl.Path
+        );
     }
 }

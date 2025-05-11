@@ -1,31 +1,29 @@
 using System.Collections.Generic;
 
 namespace Thaumaturgia.Modding
-{
-    public interface IModdableObject
+{    public interface IModdableObject
     {
-        Dictionary<string, IField> GetModFields();
+        Dictionary<string, IField> GetFields();
         void AddField<T>(string name, Field<T> field);
         Field<T> GetField<T>(string name);
     }
     
     public abstract class ModdableObject : IModdableObject
     {
-        private Dictionary<string, IField> _modFields = new Dictionary<string, IField>();
+        private Dictionary<string, IField> _fields = new Dictionary<string, IField>();
         
-        public Dictionary<string, IField> GetModFields()
+        public Dictionary<string, IField> GetFields()
         {
-            return _modFields;
+            return _fields;
         }
         
         public void AddField<T>(string name, Field<T> field)
         {
-            _modFields[name] = field;
+            _fields[name] = field;
         }
-        
-        public Field<T> GetField<T>(string name)
+          public Field<T> GetField<T>(string name)
         {
-            if (_modFields.TryGetValue(name, out IField field) && field is Field<T> typedField)
+            if (_fields.TryGetValue(name, out IField? field) && field is Field<T> typedField)
             {
                 return typedField;
             }
